@@ -53,7 +53,7 @@ public class UserController {
     private void validateUser (User user) {
         if (user.getEmail().isBlank() || !user.getEmail().contains("@"))
             throw new ValidationException("Email is incorrect");
-        if (user.getLogin().isBlank())
+        if (user.getLogin().isBlank() || user.getLogin() == null)
             throw new ValidationException("Login is incorrect");
         if (user.getBirthday().isAfter(LocalDate.now()))
             throw new ValidationException("Are you from the future?");
