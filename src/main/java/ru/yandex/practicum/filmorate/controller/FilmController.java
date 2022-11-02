@@ -53,7 +53,7 @@ public class FilmController {
             throw new ValidationException("Too long description");
         if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,28)))
             throw new ValidationException("Films dont exist that time");
-        if (film.getDuration().isNegative() || film.getDuration().isZero() || film.getDuration() == null)
+        if (film.getDuration() <=0)
             throw new ValidationException("The duration of film is incorrect");
     }
 }

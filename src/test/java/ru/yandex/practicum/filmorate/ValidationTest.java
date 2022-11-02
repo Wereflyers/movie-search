@@ -1,85 +1,114 @@
 package ru.yandex.practicum.filmorate;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ValidationTest {
+    Film film = new Film();
+    User user = new User();
+    ValidationException exception;
 
-    Film film1 = new Film(1, "name", "description", LocalDate.now(), Duration.ZERO);
-    Film film2 = new Film(2, "name", "description", LocalDate.of(999, 9, 9), Duration.ofMinutes(504));
-    Film film3 = new Film(3, "name", "toooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo long description",
-                LocalDate.now(), Duration.ofMinutes(10));
-    Film film4 = new Film(4, "", "description", LocalDate.now(), Duration.ofMinutes(10));
-    User user1 = new User(1,"email@mail.ru","login", "name", LocalDate.of(9000,9,8));
-    User user2 = new User(2, "email@mail.ru", "", "name", LocalDate.now());
-    User user3 = new User(3, "", "login", "name", LocalDate.now());
+    @BeforeEach
+    public void setProperties() {
+        film.setId(1);
+        film.setDuration(10);
+        film.setName("film");
+        film.setDescription("new film");
+        film.setReleaseDate(LocalDate.now());
 
-    @Test
-    public void checkValidationFilmExceptions() {
-
-        final ValidationException exception1 = assertThrows(
-                ValidationException.class,
-                () -> validateFilm(film1)
-        );
-        assertEquals("The duration of film is incorrect", exception1.getMessage());
-
-        final ValidationException exception2 = assertThrows(
-                ValidationException.class,
-                () -> validateFilm(film2)
-        );
-        assertEquals("Films dont exist that time", exception2.getMessage());
-
-        final ValidationException exception3 = assertThrows(
-                ValidationException.class,
-                () -> validateFilm(film3)
-        );
-        assertEquals("Too long description", exception3.getMessage());
-
-        final ValidationException exception4 = assertThrows(
-                ValidationException.class,
-                () -> validateFilm(film4)
-        );
-        assertEquals("The name is incorrect", exception4.getMessage());
+        user.setId(1);
+        user.setLogin("user");
+        user.setBirthday(LocalDate.now());
+        user.setName("name");
+        user.setEmail("email@mail.ru");
     }
 
     @Test
-    public void checkValidationUserExceptions() {
-
-        final ValidationException exception1 = assertThrows(
+    public void checkValidationFilmExceptionDuration() {
+        film.setDuration(-1);
+        exception = assertThrows(
                 ValidationException.class,
-                () -> validateUser(user1)
+                () -> validateFilm(film)
         );
-        assertEquals("Are you from the future?", exception1.getMessage());
+        assertEquals("The duration of film is incorrect", exception.getMessage());
+    }
 
-        final ValidationException exception2 = assertThrows(
+    @Test
+    public void checkValidationFilmExceptionDate() {
+        film.setReleaseDate(LocalDate.of(999,12,5));
+        exception = assertThrows(
                 ValidationException.class,
-                () -> validateUser(user2)
+                () -> validateFilm(film)
         );
-        assertEquals("Login is incorrect", exception2.getMessage());
+        assertEquals("Films dont exist that time", exception.getMessage());
+    }
 
-        final ValidationException exception3 = assertThrows(
+    @Test
+    public void checkValidationFilmExceptionDescription() {
+        film.setDescription("toooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo long description");
+        exception = assertThrows(
                 ValidationException.class,
-                () -> validateUser(user3)
+                () -> validateFilm(film)
         );
-        assertEquals("Email is incorrect", exception3.getMessage());
+        assertEquals("Too long description", exception.getMessage());
+    }
+
+    @Test
+    public void checkValidationFilmExceptionName() {
+        film.setName("");
+        exception = assertThrows(
+                ValidationException.class,
+                () -> validateFilm(film)
+        );
+        assertEquals("The name is incorrect", exception.getMessage());
+    }
+
+    @Test
+    public void checkValidationUserExceptionDate() {
+        user.setBirthday(LocalDate.of(99999,9,8));
+        exception = assertThrows(
+                ValidationException.class,
+                () -> validateUser(user)
+        );
+        assertEquals("Are you from the future?", exception.getMessage());
+    }
+
+    @Test
+    public void checkValidationUserExceptionLogin() {
+        user.setLogin("");
+        exception = assertThrows(
+                ValidationException.class,
+                () -> validateUser(user)
+        );
+        assertEquals("Login is incorrect", exception.getMessage());
+    }
+
+    @Test
+    public void checkValidationUserExceptionEmail() {
+        user.setEmail("");
+        exception = assertThrows(
+                ValidationException.class,
+                () -> validateUser(user)
+        );
+        assertEquals("Email is incorrect", exception.getMessage());
     }
 
     private void validateFilm (Film film) {
-        if (film.getName().isBlank())
+        if (film.getName().isBlank() || film.getName() == null)
             throw new ValidationException("The name is incorrect");
         if (film.getDescription().length() > 200)
             throw new ValidationException("Too long description");
         if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,28)))
             throw new ValidationException("Films dont exist that time");
-        if (film.getDuration().isNegative() || film.getDuration().isZero() || film.getDuration() == null)
+        if (film.getDuration() <= 0)
             throw new ValidationException("The duration of film is incorrect");
     }
 
