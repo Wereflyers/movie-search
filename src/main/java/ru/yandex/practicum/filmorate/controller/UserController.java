@@ -30,7 +30,7 @@ public class UserController {
     public User addUser(@Valid @RequestBody User user) {
         log.info("Got request POST /users");
         validateUser(user);
-        if (user.getName().isBlank() || user.getName() == null)
+        if (user.getName() == null || user.getName().isBlank())
             user.setName(user.getLogin());
         if (user.getId() == null)
             user.setId(users.size()+1);
