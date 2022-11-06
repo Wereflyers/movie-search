@@ -32,7 +32,7 @@ public class UserController {
         validateUser(user);
         if (user.getName().isBlank() || user.getName() == null)
             user.setName(user.getLogin());
-        if (user.getId() == 0)
+        if (user.getId() == null)
             user.setId(users.size()+1);
         users.put(user.getId(), user);
         return user;

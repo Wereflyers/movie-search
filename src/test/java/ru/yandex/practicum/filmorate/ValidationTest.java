@@ -101,6 +101,13 @@ public class ValidationTest {
         assertEquals("Email is incorrect", exception.getMessage());
     }
 
+    @Test
+    public void checkEmptyName() {
+        user.setName(null);
+        User newUser = addUser(user);
+        assertEquals(newUser.getName(), newUser.getLogin());
+    }
+
     private void validateFilm (Film film) {
         if (film.getName().isBlank() || film.getName() == null)
             throw new ValidationException("The name is incorrect");
@@ -119,5 +126,13 @@ public class ValidationTest {
             throw new ValidationException("Login is incorrect");
         if (user.getBirthday().isAfter(LocalDate.now()))
             throw new ValidationException("Are you from the future?");
+    }
+
+    public User addUser(User user) {
+        if (user.getName() == null || user.getName().isBlank())
+            user.setName(user.getLogin());
+        if (user.getId() == null)
+            user.setId(5);
+        return user;
     }
 }
