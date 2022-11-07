@@ -13,8 +13,6 @@ public class User {
     @NotNull
     @Pattern(regexp = "^\\S*$")
     private String login;
-    @NotBlank
-    @NotNull
     private String name;
     private LocalDate birthday;
 }

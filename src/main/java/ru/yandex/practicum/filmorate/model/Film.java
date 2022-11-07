@@ -11,8 +11,8 @@ import java.time.LocalDate;
 @Data
 public class Film {
     private int id;
-    @NotBlank
     @NotNull
+    @NotBlank
     private String name;
     @Size(min=1,max=200)
     private String description;
