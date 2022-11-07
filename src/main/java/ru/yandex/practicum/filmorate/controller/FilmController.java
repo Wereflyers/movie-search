@@ -19,6 +19,7 @@ import java.util.Map;
 @Slf4j
 public class FilmController {
     private static Map <Integer, Film> films = new HashMap<>();
+    private static int id = 1;
 
     @GetMapping
     public List<Film> getFilms() {
@@ -29,8 +30,8 @@ public class FilmController {
     @PostMapping
     public Film addFilm (@Valid @RequestBody Film film) {
         log.info("Got request POST /films");
-        if (film.getId() == 0)
-            film.setId(1);
+        film.setId(id);
+        id++;
         validateFilm(film);
         films.put(film.getId(), film);
         return film;

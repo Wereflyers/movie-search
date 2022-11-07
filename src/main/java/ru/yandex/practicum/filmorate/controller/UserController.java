@@ -19,6 +19,7 @@ import java.util.Map;
 @Slf4j
 public class UserController {
     private static Map<Integer, User> users = new HashMap<>();
+    private static int id = 1;
 
     @GetMapping
     public List<User> getUsers() {
@@ -32,8 +33,8 @@ public class UserController {
         validateUser(user);
         if (user.getName() == null || user.getName().isBlank())
             user.setName(user.getLogin());
-        if (user.getId() == null)
-            user.setId(users.size()+1);
+        user.setId(id);
+        id++;
         users.put(user.getId(), user);
         return user;
     }

@@ -131,7 +131,7 @@ public class ValidationTest {
     public User addUser(User user) {
         if (user.getName() == null || user.getName().isBlank())
             user.setName(user.getLogin());
-        if (user.getId() == null)
+        if (user.getId() == 0)
             user.setId(5);
         return user;
     }
