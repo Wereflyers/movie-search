@@ -31,7 +31,7 @@ public class FilmController {
     public Film addFilm (@Valid @RequestBody Film film) {
         log.info("Got request POST /films");
         film.setId(id);
-        id++;
+        id = id + 1;
         validateFilm(film);
         films.put(film.getId(), film);
         return film;
