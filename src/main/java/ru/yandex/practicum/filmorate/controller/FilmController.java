@@ -42,19 +42,19 @@ public class FilmController {
         return inMemoryFilmStorage.updateFilm(film);
     }
 
-    @PutMapping("/films/{filmId}/like/{userId}")
-    public void addLike (@PathVariable int filmId, @PathVariable int userId) {
-        log.info("User {} likes film {}", userId, filmId);
-        filmService.addLike(userId, filmId);
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike (@PathVariable int id, @PathVariable int userId) {
+        log.info("User {} likes film {}", userId, id);
+        filmService.addLike(userId, id);
     }
 
-    @DeleteMapping("/films/{filmId}/like/{userId}")
-    public void removeLike (@PathVariable int filmId, @PathVariable int userId) {
-        log.info("User {} removes like from film {}", userId, filmId);
-        filmService.removeLike(userId, filmId);
+    @DeleteMapping("{id}/like/{userId}")
+    public void removeLike (@PathVariable int id, @PathVariable int userId) {
+        log.info("User {} removes like from film {}", userId, id);
+        filmService.removeLike(userId, id);
     }
 
-    @GetMapping("/films/popular")
+    @GetMapping("/popular")
     public List<Film> getMostPopularFilms (@RequestParam(defaultValue = "10") int count) {
         log.info("GET {} most popular films", count);
         return filmService.getMostPopularFilms(count);

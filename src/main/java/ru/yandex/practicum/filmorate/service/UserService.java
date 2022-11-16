@@ -1,14 +1,18 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class UserService {
     private final UserStorage userStorage;
@@ -42,12 +46,20 @@ public class UserService {
     }
 
     public void addFriend(int userId, int friendId) {
-        Set <Integer> friendsList = userStorage.getUser(userId).getFriendsList();
-        friendsList.add(friendId);
-        userStorage.getUser(userId).setFriendsList(friendsList);
-        friendsList = userStorage.getUser(friendId).getFriendsList();
-        friendsList.add(userId);
-        userStorage.getUser(friendId).setFriendsList(friendsList);
+        User user1 = userStorage.getUser(userId);
+        User user2 = userStorage.getUser(friendId);
+        Set <Integer> friendsList1 = new HashSet<>();
+        Set <Integer> friendsList2 = new HashSet<>();
+        if(user1.getFriendsList() != null)
+            friendsList1 = user1.getFriendsList();
+        if (user2.getFriendsList() != null)
+            friendsList2 = user2.getFriendsList();
+        friendsList1.add(friendId);
+        friendsList2.add(userId);
+        user1.setFriendsList(friendsList1);
+        user2.setFriendsList(friendsList2);
+        userStorage.updateUser(user1);
+        userStorage.updateUser(user2);
     }
 
     public void removeFriend(int userId, int friendId) {
@@ -66,15 +78,20 @@ public class UserService {
     }
 
     public List<User> getCommonFriends(int user1Id, int user2Id) {
-        List<User> mutualFriends = new ArrayList<>();
-        List<Integer> friendsList1 = new ArrayList<>(userStorage.getUser(user1Id).getFriendsList());
-        List<Integer> friendsList2 = new ArrayList<>(userStorage.getUser(user2Id).getFriendsList());
-        if (friendsList1.isEmpty() || friendsList2.isEmpty())
-            return mutualFriends;
-        for (int id: friendsList1) {
-            if (friendsList2.contains(id))
-                mutualFriends.add(userStorage.getUser(id));
+        User user = userStorage.getUser(user1Id);
+        User user2 = userStorage.getUser(user2Id);
+        log.info("Not here");
+        List<User> friends = new ArrayList<>();
+        try {
+            friends = user.getFriendsList().stream()
+                    .filter(id -> user2.getFriendsList().contains(id))
+                    .map(userStorage::getUser)
+                    .collect(Collectors.toList());
+            log.info("Not 2");
+        } catch (NullPointerException ignored) {
+            log.info("Here");
         }
-        return mutualFriends;
+        log.info("Not here");
+        return friends;
     }
 }
