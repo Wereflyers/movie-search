@@ -6,7 +6,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -16,37 +15,35 @@ import java.util.List;
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
-    private final InMemoryUserStorage inMemoryUserStorage;
     private final UserService userService;
 
     @Autowired
-    public UserController(InMemoryUserStorage inMemoryUserStorage, UserService userService) {
-        this.inMemoryUserStorage = inMemoryUserStorage;
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping
     public List<User> getUsers() {
         log.info("Got request GET /users");
-        return inMemoryUserStorage.getUsers();
+        return userService.getUsers();
     }
 
     @GetMapping("/{userId}")
     public User getUser (@PathVariable int userId) {
         log.info("Got request GET user by id = {}", userId);
-        return inMemoryUserStorage.getUser(userId);
+        return userService.getUser(userId);
     }
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
         log.info("Got request POST /users");
-        return inMemoryUserStorage.addUser(user);
+        return userService.addUser(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
         log.info("Got request PUT /users");
-        return inMemoryUserStorage.updateUser(user);
+        return userService.updateUser(user);
     }
 
     @PutMapping("/users/{userId}/friends/{friendId}")
