@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class UserService {
     private final UserStorage userStorage;
@@ -80,18 +78,13 @@ public class UserService {
     public List<User> getCommonFriends(int user1Id, int user2Id) {
         User user = userStorage.getUser(user1Id);
         User user2 = userStorage.getUser(user2Id);
-        log.info("Not here");
         List<User> friends = new ArrayList<>();
         try {
             friends = user.getFriendsList().stream()
                     .filter(id -> user2.getFriendsList().contains(id))
                     .map(userStorage::getUser)
                     .collect(Collectors.toList());
-            log.info("Not 2");
-        } catch (NullPointerException ignored) {
-            log.info("Here");
-        }
-        log.info("Not here");
+        } catch (NullPointerException ignored) {}
         return friends;
     }
 }
