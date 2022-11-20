@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 public class User {
@@ -11,8 +13,12 @@ public class User {
     @Email
     private String email;
     @NotNull
+    @NotBlank
     @Pattern(regexp = "^\\S*$")
     private String login;
     private String name;
+    @Past
     private LocalDate birthday;
+    @JsonIgnore
+    Set<Integer> friendsList;
 }
