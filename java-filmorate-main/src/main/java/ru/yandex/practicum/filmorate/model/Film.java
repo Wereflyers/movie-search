@@ -22,6 +22,8 @@ public class Film {
     private LocalDate releaseDate;
     @Min(1)
     private int duration;
+    private int genreId;
+    private int mpa;
     @JsonIgnore
     Set <Integer> likes;
 }
