@@ -14,12 +14,11 @@ create table IF NOT EXISTS RATING_MPA
         primary key (RATING_ID)
 );
 
-create table IF NOT EXISTS FILMORATE_USER
+create table FILMORATE_USER
 (
     USER_ID   INTEGER auto_increment,
     USER_NAME CHARACTER VARYING,
-    LOGIN     CHARACTER VARYING not null
-        unique,
+    LOGIN     CHARACTER VARYING not null,
     EMAIL     CHARACTER VARYING not null,
     BIRTHDAY  DATE,
     constraint "FILMORATE_USER_pk"
@@ -42,7 +41,7 @@ create table IF NOT EXISTS FILMS
         foreign key (RATING_ID) references RATING_MPA
 );
 
-create table FRIENDS_LIST
+create table IF NOT EXISTS FRIENDS_LIST
 (
     USER_ID           INTEGER,
     FRIEND_ID         INTEGER not null,

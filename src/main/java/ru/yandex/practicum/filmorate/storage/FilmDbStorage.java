@@ -41,7 +41,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        jdbcTemplate.update("MERGE INTO FILMS (GENRE_ID, FILM_NAME, DESCRIPTION, DURATION, RATING_ID, RELEASE_DATE) VALUES ( ?,?,?,?,?,?)",
+        jdbcTemplate.update("INSERT INTO FILMS (GENRE_ID, FILM_NAME, DESCRIPTION, DURATION, RATING_ID, RELEASE_DATE) VALUES ( ?,?,?,?,?,?)",
                 film.getGenreId(),
                 film.getName(),
                 film.getDescription(),
@@ -139,13 +139,16 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Film makeFilm(SqlRowSet rs) throws SQLException {
-        int id = rs.getInt("FILM_ID");
-        int genreId = rs.getInt("GENRE_ID");
-        String name = rs.getString("FILM_NAME");
-        String description = rs.getString("DESCRIPTION");
-        int duration = rs.getInt("DURATION");
-        int ratingId = rs.getInt("RATING_ID");
-        LocalDate releaseDate = Objects.requireNonNull(rs.getDate("RELEASE_DATE")).toLocalDate();
-        return new Film(id, name, description, releaseDate, duration, genreId, ratingId);
+        if (rs.next()){
+            int id = rs.getInt("FILM_ID");
+            int genreId = rs.getInt("GENRE_ID");
+            String name = rs.getString("FILM_NAME");
+            String description = rs.getString("DESCRIPTION");
+            int duration = rs.getInt("DURATION");
+            int ratingId = rs.getInt("RATING_ID");
+            LocalDate releaseDate = Objects.requireNonNull(rs.getDate("RELEASE_DATE")).toLocalDate();
+            return new Film(id, name, description, releaseDate, duration, genreId, ratingId);
+        }
+        return null;
     }
 }
