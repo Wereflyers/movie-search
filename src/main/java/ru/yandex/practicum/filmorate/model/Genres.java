@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class RatingMpa {
+public class Genres {
     private int id;
     private String name;
 }
