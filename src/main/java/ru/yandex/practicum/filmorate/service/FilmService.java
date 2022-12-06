@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.UserDbStorage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,10 +15,12 @@ import java.util.List;
 @Slf4j
 public class FilmService {
     private final FilmDbStorage filmDbStorage;
+    private final UserDbStorage userDbStorage;
 
     @Autowired
-    public FilmService(FilmDbStorage filmDbStorage) {
+    public FilmService(FilmDbStorage filmDbStorage, UserDbStorage userDbStorage) {
         this.filmDbStorage = filmDbStorage;
+        this.userDbStorage = userDbStorage;
     }
 
     public List<Film> getFilms() {
@@ -25,6 +28,9 @@ public class FilmService {
     }
 
     public Film getFilm(int id) {
+        if (filmDbStorage.getFilm(id) == null) {
+            throw new NullPointerException("Film not found");
+        }
         return filmDbStorage.getFilm(id);
     }
 
@@ -43,12 +49,16 @@ public class FilmService {
     }
 
     public void addLike(int userId, int filmId) {
+        if (userDbStorage.getUser(userId) == null)
+            throw new NullPointerException("User not found");
         if (filmDbStorage.getFilm(filmId) == null)
             throw new NullPointerException("Film not found");
         filmDbStorage.addLike(userId, filmId);
     }
 
     public void removeLike(int userId, int filmId) {
+        if (userDbStorage.getUser(userId) == null)
+            throw new NullPointerException("User not found");
         if (filmDbStorage.getFilm(filmId) == null)
             throw new NullPointerException("Film not found");
         filmDbStorage.removeLike(userId, filmId);

@@ -22,6 +22,8 @@ public class UserService {
     }
 
     public User getUser(int id) {
+        if (userDbStorage.getUser(id) == null)
+            throw new NullPointerException("User not found");
         return userDbStorage.getUser(id);
     }
 
