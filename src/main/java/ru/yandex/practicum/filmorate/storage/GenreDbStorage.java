@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.Genres;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
 
 @Repository
@@ -32,7 +33,8 @@ public class GenreDbStorage {
     }
 
     public void addFilmGenres(List<Genres> genres, int filmId) {
-       for (Genres genre : genres) {
+        HashSet<Genres> genresSet = new HashSet<>(genres);
+       for (Genres genre : genresSet) {
                 jdbcTemplate.update("INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) VALUES ( ?,? )", filmId, genre.getId());
        }
     }

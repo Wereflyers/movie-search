@@ -78,8 +78,12 @@ public class FilmDbStorage implements FilmStorage {
 
     public List<Film> getMostPopularFilms(int count) {
         String sql = "SELECT * FROM FILMS F " +
-                "RIGHT OUTER JOIN (SELECT FILM_ID, COUNT(USER_ID) L FROM LIKES GROUP BY FILM_ID ORDER BY L DESC LIMIT ?) PF ON F.FILM_ID = PF.FILM_ID";
-        return jdbcTemplate.query(sql, this::makeFilms, count);
+                "RIGHT OUTER JOIN (SELECT FILM_ID, COUNT(USER_ID) AS L FROM LIKES GROUP BY FILM_ID ORDER BY L DESC LIMIT ?) AS PF ON F.FILM_ID = PF.FILM_ID ";
+        List<Film> popularFilms = jdbcTemplate.query(sql, this::makeFilms, count);
+        if (popularFilms.isEmpty()) {
+            return jdbcTemplate.query("SELECT * FROM FILMS ORDER BY FILM_ID LIMIT ?", this::makeFilms, count);
+        }
+        return popularFilms;
     }
 
     private Film makeFilm(SqlRowSet rs) {
