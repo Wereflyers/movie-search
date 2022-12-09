@@ -1,7 +1,7 @@
 create table IF NOT EXISTS GENRES
 (
     GENRE_ID INTEGER auto_increment,
-    GENRE    CHARACTER VARYING,
+    GENRE    CHARACTER VARYING(20),
     constraint "GENRES_pk"
         primary key (GENRE_ID)
 );
@@ -9,7 +9,7 @@ create table IF NOT EXISTS GENRES
 create table IF NOT EXISTS RATING_MPA
 (
     RATING_ID INTEGER auto_increment,
-    RATING_NAME    CHARACTER VARYING,
+    RATING_NAME    CHARACTER VARYING(10),
     constraint "RATING_MPA_pk"
         primary key (RATING_ID)
 );
@@ -17,9 +17,9 @@ create table IF NOT EXISTS RATING_MPA
 create table FILMORATE_USER
 (
     USER_ID   INTEGER auto_increment,
-    USER_NAME CHARACTER VARYING,
-    LOGIN     CHARACTER VARYING not null,
-    EMAIL     CHARACTER VARYING not null,
+    USER_NAME CHARACTER VARYING(15),
+    LOGIN     CHARACTER VARYING(15) not null,
+    EMAIL     CHARACTER VARYING(25) not null,
     BIRTHDAY  DATE,
     constraint "FILMORATE_USER_pk"
         primary key (USER_ID)
@@ -29,7 +29,7 @@ create table IF NOT EXISTS FILMS
 (
     FILM_ID      INTEGER auto_increment
         primary key,
-    FILM_NAME    CHARACTER VARYING not null,
+    FILM_NAME    CHARACTER VARYING(20) not null,
     DESCRIPTION  CHARACTER VARYING(200),
     DURATION     INTEGER,
     RATING_ID    INTEGER,
