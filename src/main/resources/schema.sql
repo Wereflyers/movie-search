@@ -17,9 +17,9 @@ create table IF NOT EXISTS RATING_MPA
 create table FILMORATE_USER
 (
     USER_ID   INTEGER auto_increment,
-    USER_NAME CHARACTER VARYING(30),
-    LOGIN     CHARACTER VARYING(15) not null,
-    EMAIL     CHARACTER VARYING(25) not null,
+    USER_NAME CHARACTER VARYING(50),
+    LOGIN     CHARACTER VARYING(50) not null,
+    EMAIL     CHARACTER VARYING(100) not null,
     BIRTHDAY  DATE,
     constraint "FILMORATE_USER_pk"
         primary key (USER_ID)
