@@ -17,8 +17,11 @@ public class MpaService {
     }
 
     public Mpa getMpa(int id) {
-        if (mpaDbStorage.getMpa(id) == null)
+        try {
+            mpaDbStorage.getMpa(id);
+        } catch (Exception e) {
             throw new NullPointerException("Id is wrong");
+        }
         return mpaDbStorage.getMpa(id);
     }
 
