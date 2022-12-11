@@ -26,7 +26,7 @@ public class Film {
     @Min(1)
     private int duration;
     private List<Genres> genres;
-    Mpa mpa;
+    private Mpa mpa;
 
     public Film() {
     }

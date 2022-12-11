@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,17 +18,11 @@ import java.util.*;
 @Qualifier
 @Repository
 @Slf4j
+@RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final MpaDbStorage mpaDbStorage;
     private final GenreDbStorage genreDbStorage;
-
-    @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, MpaDbStorage mpaDbStorage, GenreDbStorage genreDbStorage) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.mpaDbStorage = mpaDbStorage;
-        this.genreDbStorage = genreDbStorage;
-    }
 
     @Override
     public List<Film> getFilms() {
@@ -66,14 +61,6 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film getFilm(int id) {
         return makeFilm(jdbcTemplate.queryForRowSet("SELECT * FROM FILMS WHERE FILM_ID = ?", id));
-    }
-
-    public void addLike(int userId, int filmId) {
-        jdbcTemplate.update("INSERT INTO LIKES (USER_ID, FILM_ID) VALUES (?,?)", userId, filmId);
-    }
-
-    public void removeLike(int userId, int filmId) {
-        jdbcTemplate.update("DELETE FROM LIKES WHERE USER_ID = ? AND FILM_ID = ?", userId, filmId);
     }
 
     public List<Film> getMostPopularFilms(int count) {

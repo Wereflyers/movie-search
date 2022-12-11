@@ -23,7 +23,7 @@ public class UserService {
 
     public User getUser(int id) {
         if (userDbStorage.getUser(id) == null)
-            throw new NullPointerException("User not found");
+            throw new NullPointerException("User id = " + id + " not found");
         return userDbStorage.getUser(id);
     }
 
@@ -32,7 +32,7 @@ public class UserService {
         if (user.getName() == null || user.getName().isBlank())
             user.setName(user.getLogin());
         if (userDbStorage.getUser(user.getId()) == null)
-            throw new NullPointerException("User not found");
+            throw new NullPointerException("User id = " + user.getId() + " not found");
         return userDbStorage.updateUser(user);
     }
 
@@ -45,31 +45,31 @@ public class UserService {
 
     public List<User> getAllFriends(int userId) {
         if (userDbStorage.getUser(userId) == null)
-            throw new NullPointerException("User not found");
+            throw new NullPointerException("User id = " + userId + " not found");
         return userDbStorage.getAllFriends(userId);
     }
 
     public void addFriend(int userId, int friendId) {
         if (userDbStorage.getUser(userId) == null)
-            throw new NullPointerException("User not found");
+            throw new NullPointerException("User id = " + userId + " not found");
         if (userDbStorage.getUser(friendId) == null)
-            throw new NullPointerException("User not found");
+            throw new NullPointerException("User id = " + friendId + " not found");
         userDbStorage.addFriend(userId, friendId);
     }
 
     public void removeFriend(int userId, int friendId) {
         if (userDbStorage.getUser(userId) == null)
-            throw new NullPointerException("User not found");
+            throw new NullPointerException("User id = " + userId + " not found");
         if (userDbStorage.getUser(friendId) == null)
-            throw new NullPointerException("User not found");
+            throw new NullPointerException("User id = " + friendId + " not found");
         userDbStorage.removeFriend(userId, friendId);
     }
 
     public List<User> getCommonFriends(int user1Id, int user2Id) {
         if (userDbStorage.getUser(user1Id) == null)
-            throw new NullPointerException("User not found");
+            throw new NullPointerException("User id = " + user1Id + " not found");
         if (userDbStorage.getUser(user2Id) == null)
-            throw new NullPointerException("User not found");
+            throw new NullPointerException("User id = " + user2Id + " not found");
         return userDbStorage.getCommonFriends(user1Id, user2Id);
     }
 

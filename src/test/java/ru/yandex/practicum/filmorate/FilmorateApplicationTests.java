@@ -10,10 +10,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genres;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.GenreDbStorage;
-import ru.yandex.practicum.filmorate.storage.MpaDbStorage;
-import ru.yandex.practicum.filmorate.storage.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,6 +26,7 @@ class FilmorateApplicationTests {
 	private final FilmDbStorage filmStorage;
 	private final GenreDbStorage genreStorage;
 	private final MpaDbStorage mpaStorage;
+	private final LikeDbStorage likeStorage;
 
 	private final Genres genre = new Genres(1, "Комедия");
 	private final Mpa mpa = new Mpa(1, "G");
@@ -109,14 +107,14 @@ class FilmorateApplicationTests {
 	public void testLikes() {
 		assertThat(filmStorage.getMostPopularFilms(2))
 				.hasSize(2);
-		filmStorage.addLike(1, 2);
+		likeStorage.addLike(1, 2);
 		List<Film> popFilms = filmStorage.getMostPopularFilms(1);
 		assertThat(popFilms)
 				.hasSize(1);
 		assertThat(popFilms.get(0))
 				.isNotNull()
 				.hasFieldOrPropertyWithValue("id", 2);
-		filmStorage.removeLike(1,1);
+		likeStorage.removeLike(1,1);
 		popFilms = filmStorage.getMostPopularFilms(1);
 		assertThat(popFilms)
 				.hasSize(1);
