@@ -2,89 +2,83 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.UserDbStorage;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    private final UserStorage userStorage;
-
+    private final UserDbStorage userDbStorage;
     @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
+    public UserService(UserDbStorage userDbStorage) {
+        this.userDbStorage = userDbStorage;
     }
 
     public List<User> getUsers() {
-        return userStorage.getUsers();
+        return userDbStorage.getUsers();
     }
 
     public User getUser(int id) {
-        return userStorage.getUser(id);
+        if (userDbStorage.getUser(id) == null)
+            throw new NullPointerException("User id = " + id + " not found");
+        return userDbStorage.getUser(id);
     }
 
     public User updateUser(User user) {
-        return userStorage.updateUser(user);
+        validateUser(user);
+        if (user.getName() == null || user.getName().isBlank())
+            user.setName(user.getLogin());
+        if (userDbStorage.getUser(user.getId()) == null)
+            throw new NullPointerException("User id = " + user.getId() + " not found");
+        return userDbStorage.updateUser(user);
     }
 
     public User addUser(User user) {
-        return userStorage.addUser(user);
+        validateUser(user);
+        if (user.getName() == null || user.getName().isBlank())
+            user.setName(user.getLogin());
+        return userDbStorage.addUser(user);
     }
 
     public List<User> getAllFriends(int userId) {
-        List<User> friendsList = new ArrayList<>();
-        userStorage.getUser(userId).getFriendsList()
-                .forEach(i -> friendsList.add(userStorage.getUser(i)));
-        return friendsList;
+        if (userDbStorage.getUser(userId) == null)
+            throw new NullPointerException("User id = " + userId + " not found");
+        return userDbStorage.getAllFriends(userId);
     }
 
     public void addFriend(int userId, int friendId) {
-        User user1 = userStorage.getUser(userId);
-        User user2 = userStorage.getUser(friendId);
-        Set <Integer> friendsList1 = new HashSet<>();
-        Set <Integer> friendsList2 = new HashSet<>();
-        if(user1.getFriendsList() != null)
-            friendsList1 = user1.getFriendsList();
-        if (user2.getFriendsList() != null)
-            friendsList2 = user2.getFriendsList();
-        friendsList1.add(friendId);
-        friendsList2.add(userId);
-        user1.setFriendsList(friendsList1);
-        user2.setFriendsList(friendsList2);
-        userStorage.updateUser(user1);
-        userStorage.updateUser(user2);
+        if (userDbStorage.getUser(userId) == null)
+            throw new NullPointerException("User id = " + userId + " not found");
+        if (userDbStorage.getUser(friendId) == null)
+            throw new NullPointerException("User id = " + friendId + " not found");
+        userDbStorage.addFriend(userId, friendId);
     }
 
     public void removeFriend(int userId, int friendId) {
-        Set <Integer> friendsList = userStorage.getUser(userId).getFriendsList();
-        if (!friendsList.contains(friendId)) {
-            throw new NullPointerException("He is not your friend");
-        }
-        friendsList.remove(friendId);
-        userStorage.getUser(userId).setFriendsList(friendsList);
-        friendsList = userStorage.getUser(friendId).getFriendsList();
-        if (!friendsList.contains(userId)) {
-            throw new NullPointerException("He is not your friend");
-        }
-        friendsList.remove(userId);
-        userStorage.getUser(friendId).setFriendsList(friendsList);
+        if (userDbStorage.getUser(userId) == null)
+            throw new NullPointerException("User id = " + userId + " not found");
+        if (userDbStorage.getUser(friendId) == null)
+            throw new NullPointerException("User id = " + friendId + " not found");
+        userDbStorage.removeFriend(userId, friendId);
     }
 
     public List<User> getCommonFriends(int user1Id, int user2Id) {
-        User user = userStorage.getUser(user1Id);
-        User user2 = userStorage.getUser(user2Id);
-        List<User> friends = new ArrayList<>();
-        try {
-            friends = user.getFriendsList().stream()
-                    .filter(id -> user2.getFriendsList().contains(id))
-                    .map(userStorage::getUser)
-                    .collect(Collectors.toList());
-        } catch (NullPointerException ignored) {}
-        return friends;
+        if (userDbStorage.getUser(user1Id) == null)
+            throw new NullPointerException("User id = " + user1Id + " not found");
+        if (userDbStorage.getUser(user2Id) == null)
+            throw new NullPointerException("User id = " + user2Id + " not found");
+        return userDbStorage.getCommonFriends(user1Id, user2Id);
+    }
+
+    private void validateUser (User user) {
+        if (user.getEmail().isBlank() || !user.getEmail().contains("@"))
+            throw new ValidationException("Email is incorrect");
+        if (user.getLogin().isBlank() || user.getLogin() == null)
+            throw new ValidationException("Login is incorrect");
+        if (user.getBirthday().isAfter(LocalDate.now()))
+            throw new ValidationException("Are you from the future?");
     }
 }
